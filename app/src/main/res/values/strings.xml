@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Klinika Zdrowia</string>
+
+    <string name="clinic_phone_uri">tel:+48123456789</string>
+
+    <string name="home_welcome">Witaj!</string>
+    <string name="home_next_visit">Twoja najbliższa wizyta: 24.04.2026 o 10:30 (dr Kowalski)</string>
+
+    <string name="home_menu_book_appointment">Umów wizytę</string>
+    <string name="home_menu_book_appointment_desc">Wybierz dogodny termin konsultacji</string>
+    <string name="home_menu_my_appointments">Twoje wizyty</string>
+    <string name="home_menu_my_appointments_desc">Sprawdź zaplanowane i zakończone wizyty</string>
+    <string name="home_menu_history">Historia medyczna</string>
+    <string name="home_menu_history_desc">Przeglądaj dokumentację i wyniki badań</string>
+    <string name="home_menu_contact">Kontakt</string>
+    <string name="home_menu_contact_desc">Skontaktuj się z recepcją kliniki</string>
+    <string name="home_menu_settings">Ustawienia</string>
+    <string name="home_menu_settings_desc">Dostosuj profil i preferencje aplikacji</string>
+
+    <string name="appointments_title">Twoje wizyty</string>
+    <string name="appointments_doctor">Dr Anna Nowak - Kardiolog</string>
+    <string name="appointments_date">24.04.2026, 10:30</string>
+    <string name="appointments_status">Status: Potwierdzona</string>
+    <string name="appointments_book_new">Umów nową</string>
+    <string name="appointments_book_action_placeholder">Funkcja umawiania wizyty będzie dostępna wkrótce.</string>
+
+    <string name="history_title">Historia medyczna</string>
+    <string name="history_item_1">Wyniki badań krwi - marzec 2026</string>
+    <string name="history_item_2">RTG klatki piersiowej - luty 2026</string>
+    <string name="history_item_3">Konsultacja internistyczna - styczeń 2026</string>
+
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_profile">Profil - Dane pacjenta</string>
+    <string name="settings_notifications">Powiadomienia - Ustaw przypomnienia</string>
+    <string name="settings_about">O aplikacji - Wersja i informacje</string>
+</resources>
