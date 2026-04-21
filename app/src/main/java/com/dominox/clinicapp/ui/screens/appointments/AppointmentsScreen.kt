@@ -49,7 +49,7 @@ fun AppointmentsScreen(onBackClick: () -> Unit) {
                 }
             }
             Button(onClick = {}, modifier = Modifier.padding(top = 4.dp)) {
-                Text("Book new")
+                Text("Umów nową")
             }
         }
     }

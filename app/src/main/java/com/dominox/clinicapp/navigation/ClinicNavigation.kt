@@ -1,5 +1,8 @@
 package com.dominox.clinicapp.navigation
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,11 +29,17 @@ fun ClinicNavigation(
         startDestination = ClinicRoute.HOME
     ) {
         composable(ClinicRoute.HOME) {
+            val context = LocalContext.current
             HomeScreen(
                 onAppointmentsClick = { navController.navigate(ClinicRoute.APPOINTMENTS) },
                 onHistoryClick = { navController.navigate(ClinicRoute.HISTORY) },
                 onSettingsClick = { navController.navigate(ClinicRoute.SETTINGS) },
-                onContactClick = { navController.navigate(ClinicRoute.SETTINGS) }
+                onContactClick = {
+                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+48123456789"))
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(intent)
+                    }
+                }
             )
         }
         composable(ClinicRoute.APPOINTMENTS) {
