@@ -17,11 +17,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.buttonLogin).setOnClickListener {
-            var email = view.findViewById<TextInputEditText>(R.id.editEmail).text.toString().trim()
-            var password = view.findViewById<TextInputEditText>(R.id.editPassword).text.toString().trim()
+            val email = view.findViewById<TextInputEditText>(R.id.editEmail).text.toString().trim()
+            val password = view.findViewById<TextInputEditText>(R.id.editPassword).text.toString().trim()
 
-            var emailLayout = view.findViewById<TextInputLayout>(R.id.emailLayout)
-            var passwordLayout = view.findViewById<TextInputLayout>(R.id.passwordLayout)
+            val emailLayout = view.findViewById<TextInputLayout>(R.id.emailLayout)
+            val passwordLayout = view.findViewById<TextInputLayout>(R.id.passwordLayout)
 
             emailLayout.error = null
             passwordLayout.error = null
@@ -46,6 +46,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 Toast.makeText(requireContext(), "Logowanie OK", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.homeFragment)
             }
+        }
+
+        view.findViewById<Button>(R.id.buttonRegister).setOnClickListener {
+            findNavController().navigate(R.id.registerFragment)
         }
     }
 }
