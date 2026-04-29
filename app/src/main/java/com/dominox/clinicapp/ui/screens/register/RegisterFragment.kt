@@ -7,12 +7,17 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class RegisterFragment: Fragment(R.layout.fragment_register) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<MaterialToolbar>(R.id.registerToolbar).setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
 
         view.findViewById<Button>(R.id.buttonRegister).setOnClickListener {
             var isValid = true

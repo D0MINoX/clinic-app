@@ -11,5 +11,6 @@ data class Patient(
     val email: String,
     val phone: String,
     val dateOfBirth: String,
-    val address: String
+    val address: String,
+    val password: String = ""
 )

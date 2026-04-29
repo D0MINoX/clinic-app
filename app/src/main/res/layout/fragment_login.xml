@@ -50,12 +50,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Zaloguj się"
-        android:layout_marginBottom="16dp"/>
+        android:layout_margin="10dp"
+        android:stateListAnimator="@null"
+        android:elevation="6dp"/>
 
     <Button
         android:id="@+id/buttonRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Zarejestruj się"/>
+        android:text="Zarejestruj się"
+        android:stateListAnimator="@null"
+        android:layout_margin="10dp"
+        android:elevation="6dp"/>
 
 </LinearLayout>

@@ -32,7 +32,16 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.dominox.clinicapp.ui.screens.settings.SettingsFragment"
-        android:label="@string/settings_title" />
+        android:label="@string/settings_title">
+        <action
+            android:id="@+id/action_settingsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.dominox.clinicapp.ui.screens.settings.ProfileFragment"
+        android:label="@string/profile_title" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.dominox.clinicapp.ui.screens.login.LoginFragment"

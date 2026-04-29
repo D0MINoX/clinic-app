@@ -20,6 +20,7 @@
         android:padding="16dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profileCard"
             style="@style/Widget.ClinicApp.MenuCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

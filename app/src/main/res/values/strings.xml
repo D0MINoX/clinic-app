@@ -34,4 +34,21 @@
     <string name="settings_profile">Profil - Dane pacjenta</string>
     <string name="settings_notifications">Powiadomienia - Ustaw przypomnienia</string>
     <string name="settings_about">O aplikacji - Wersja i informacje</string>
+
+    <string name="profile_title">Mój Profil</string>
+    <string name="profile_first_name">Imię</string>
+    <string name="profile_last_name">Nazwisko</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_phone">Numer telefonu</string>
+    <string name="profile_change_password">Zmień hasło</string>
+    <string name="profile_current_password">Aktualne hasło</string>
+    <string name="profile_new_password">Nowe hasło</string>
+    <string name="profile_confirm_password">Potwierdź hasło</string>
+    <string name="profile_save">Zapisz zmiany</string>
+    <string name="profile_cancel">Anuluj</string>
+    <string name="profile_save_success">Dane zostały zapisane</string>
+    <string name="profile_save_error">Błąd przy zapisywaniu danych</string>
+    <string name="profile_password_mismatch">Hasła nie są takie same</string>
+    <string name="profile_password_empty">Hasło nie może być puste</string>
+
 </resources>
