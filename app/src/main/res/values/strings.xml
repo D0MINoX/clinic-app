@@ -50,5 +50,7 @@
     <string name="profile_save_error">Błąd przy zapisywaniu danych</string>
     <string name="profile_password_mismatch">Hasła nie są takie same</string>
     <string name="profile_password_empty">Hasło nie może być puste</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
