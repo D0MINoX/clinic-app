@@ -6,10 +6,16 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
+import com.dominox.clinicapp.api.AuthService
+import com.dominox.clinicapp.data.models.LoginRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -43,7 +49,22 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
 
             if (isValid){
-                Toast.makeText(requireContext(), "Logowanie OK", Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch {
+                    val request = LoginRequest(
+                        email = email,
+                        passwordHash = password
+                    )
+
+                    val result = AuthService().login(request)
+
+                    withContext(Dispatchers.Main) {
+                        result.onSuccess {
+                            showSimpleAlert("Sukces", "Zalogowano pomyślnie")
+                        }.onFailure {
+                            showSimpleAlert("Logowanie nieudane", it.message ?: "Spróbuj ponownie")
+                        }
+                    }
+                }
                 findNavController().navigate(R.id.homeFragment)
             }
         }
@@ -51,5 +72,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         view.findViewById<Button>(R.id.buttonRegister).setOnClickListener {
             findNavController().navigate(R.id.registerFragment)
         }
+    }
+    fun showSimpleAlert(title: String, message: String) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext()) // lub requireContext() we fragmencie
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
