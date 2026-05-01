@@ -5,17 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.EditText
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
-import java.text.SimpleDateFormat
 import java.util.*
 
 class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
 
     private lateinit var dateField: EditText
+    private lateinit var timeField: EditText
     private var selectedDate: String = ""
+    private var selectedTime: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,6 +31,12 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
         dateField = view.findViewById(R.id.dateField)
         dateField.setOnClickListener {
             openDatePicker()
+        }
+
+        // timePicker
+        timeField = view.findViewById(R.id.timeField)
+        timeField.setOnClickListener {
+            openTimePicker()
         }
     }
 
@@ -69,5 +77,31 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
         datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
 
         datePickerDialog.show()
+    }
+
+    private fun openTimePicker(){
+        val clock = Calendar.getInstance()
+        val hour = clock.get(Calendar.HOUR_OF_DAY)
+        val minute = clock.get(Calendar.MINUTE)
+
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
+            {_, selectedHour, selectedMinute ->
+                val formatted = String.format(
+                    "%02d:%02d",
+                    selectedHour,
+                    selectedMinute
+                )
+                timeField.setText(formatted)
+                selectedTime = formatted
+
+                Snackbar.make(
+                    timeField,
+                    "Wybrano: $formatted",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }, hour, minute, true
+        )
+        timePickerDialog.show()
     }
 }

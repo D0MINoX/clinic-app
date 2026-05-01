@@ -33,26 +33,71 @@
             android:layout_marginLeft="20dp"
             android:layout_marginBottom="15dp" />
 
-        <TextView
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wybierz datę"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp" />
+            android:columnCount="2"
+            android:rowCount="2"
+            android:padding="10dp">
 
-        <EditText
-            android:id="@+id/dateField"
-            android:layout_width="300dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="15dp"
-            android:hint="Kliknij aby wybrać datę"
-            android:focusable="false"
-            android:inputType="none"
-            android:clickable="true"
-            android:cursorVisible="false"
-            android:background="@drawable/edit_text_background" />
+            <LinearLayout
+                android:layout_width = "0dp"
+                android:layout_height = "wrap_content"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wybierz datę"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/dateField"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="15dp"
+                    android:hint="Kliknij aby wybrać"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:clickable="true"
+                    android:cursorVisible="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Wybierz godzinę"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/timeField"
+                    android:hint="Kliknij aby wybrać"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:clickable="true"
+                    android:cursorVisible="false" />
+            </LinearLayout>
+
+
+
+        </GridLayout>
+
+            <!--android:background="@drawable/edit_text_background" /> -->
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
