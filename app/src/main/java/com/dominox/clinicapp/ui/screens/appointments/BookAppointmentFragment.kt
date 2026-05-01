@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
 import com.google.android.material.appbar.MaterialToolbar
@@ -37,6 +38,17 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
         timeField = view.findViewById(R.id.timeField)
         timeField.setOnClickListener {
             openTimePicker()
+        }
+
+        // Anulowanie rezerwacji
+        view.findViewById<Button>(R.id.bookCancelButton).setOnClickListener {
+            findNavController().navigateUp()
+
+            Snackbar.make(
+                view,
+                "Anulowano rezerwację",
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 

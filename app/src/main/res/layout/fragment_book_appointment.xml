@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="Wybierz lekarza"
             android:textSize="18sp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp" />
 
         <Spinner
@@ -48,7 +48,7 @@
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
                 android:padding="10dp">
-
+<!-- WYBÓR DATY -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                     android:focusable="false"
                     android:inputType="none"
                     android:clickable="true"
-                    android:cursorVisible="false" />
+                    android:cursorVisible="false"/>
             </LinearLayout>
 
             <LinearLayout
@@ -75,7 +75,7 @@
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
                 android:padding="10dp">
-
+<!-- WYBÓR GODZINY -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,12 +92,62 @@
                     android:clickable="true"
                     android:cursorVisible="false" />
             </LinearLayout>
-
-
-
         </GridLayout>
+<!-- OPIS POWODU -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="Powód wizyty"
+            android:textSize="18sp" />
+        
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:hint="Opisz powód wizyty"
+            android:inputType="textMultiLine"
+            android:gravity="top|left"
+            android:padding="10dp"/>
 
-            <!--android:background="@drawable/edit_text_background" /> -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="200dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bookCancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="Anuluj" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bookReserveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="Zarezerwuj" />
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="0dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
