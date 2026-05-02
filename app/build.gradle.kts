@@ -62,7 +62,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.5")
     implementation("com.google.android.material:material:1.13.0")
-
+    implementation("com.auth0.android:jwtdecode:2.0.2")
     val ktor_version = "2.3.12"
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
