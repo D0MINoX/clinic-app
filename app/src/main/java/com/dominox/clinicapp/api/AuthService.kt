@@ -10,7 +10,7 @@ import io.ktor.client.call.*
 
 class AuthService {
     // 10.0.2.2 to specjalny adres IP emulatora wskazujący na localhost Twojego komputera
-    private val BASE_URL = "http://10.0.2.2:8081/api"
+    private val BASE_URL = "https://api-kotlin.rosaryapi.pl/api/"
 
     suspend fun register(patient: Patient): Result<String> {
         return try {
