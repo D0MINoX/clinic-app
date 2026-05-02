@@ -2,15 +2,18 @@ package com.dominox.clinicapp.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.ktor.websocket.CloseReason
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "appointments")
+@Serializable
 data class Appointment(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val patientName: String,
-    val doctorName: String,
-    val date: String,
-    val time: String,
-    val description: String,
+    val id: Int,
+    val patientId: Int,
+    val doctorId: Int,
+    val appointmentDate: String,
+    val appointmentTime: String,
+    val reason: String,
     val status: String
 )

@@ -10,15 +10,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.AuthService
+import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.data.models.LoginRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
+    @Inject lateinit var authService: AuthService
+    @Inject
+    lateinit var tokenManager: TokenManager
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,17 +61,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         passwordHash = password
                     )
 
-                    val result = AuthService().login(request)
+                    val result = authService.login(request)
 
                     withContext(Dispatchers.Main) {
-                        result.onSuccess {
-                            showSimpleAlert("Sukces", "Zalogowano pomyślnie")
+                        result.onSuccess {token ->
+                            tokenManager.saveToken(token)
+                            findNavController().navigate(R.id.homeFragment)
                         }.onFailure {
                             showSimpleAlert("Logowanie nieudane", it.message ?: "Spróbuj ponownie")
                         }
                     }
                 }
-                findNavController().navigate(R.id.homeFragment)
+
             }
         }
 
