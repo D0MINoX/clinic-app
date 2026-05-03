@@ -52,11 +52,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wybierz datę"
+                    android:text="Wybierz datę i godzinę"
                     android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/dateField"
+                    android:id="@+id/dateTimeField"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginBottom="15dp"
@@ -67,6 +67,11 @@
                     android:cursorVisible="false"/>
             </LinearLayout>
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_columnWeight="0.25" ></Space>
+<!--
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -75,7 +80,7 @@
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
                 android:padding="10dp">
-<!-- WYBÓR GODZINY -->
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,7 +96,7 @@
                     android:inputType="none"
                     android:clickable="true"
                     android:cursorVisible="false" />
-            </LinearLayout>
+            </LinearLayout> -->
         </GridLayout>
 <!-- OPIS POWODU -->
         <TextView
