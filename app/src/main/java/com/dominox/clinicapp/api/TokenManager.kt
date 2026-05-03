@@ -27,8 +27,17 @@ private val context: Context
     fun getUserIdFromToken(): Int? {
         val token = getToken() ?: return null
         return try {
-            val jwt = JWT(token)
+            // ogolnie byl problem, bo przez to, że token jest w jsonie
+            // wywalalo błąd autoryzacji tokenu, naprawiłem to w poniższy sposób
+            // - patryk
+            val tokenToDecode = if (token.startsWith("{\"token\":\"")) {
+                token.substringAfter("{\"token\":\"").substringBefore("\"}")
+            } else {
+                token
+            }
+            val jwt = JWT(tokenToDecode)
             val userId = jwt.getClaim("userId").asInt()
+                ?: jwt.getClaim("userId").asString()?.toIntOrNull()
             userId
         } catch (e: Exception) {
             null
