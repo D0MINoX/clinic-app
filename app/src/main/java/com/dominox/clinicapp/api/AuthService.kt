@@ -1,7 +1,6 @@
 package com.dominox.clinicapp.api
 import com.dominox.clinicapp.data.models.LoginRequest
 import com.dominox.clinicapp.data.models.Patient
-import com.dominox.clinicapp.data.models.TokenResponse
 import com.dominox.clinicapp.network.NetworkClient
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -32,23 +31,16 @@ class AuthService @Inject constructor() {
     }
     suspend fun login(loginRequest: LoginRequest): Result<String> {
         return try {
-            val response = NetworkClient.httpClient.post("${BASE_URL}login") {
+            val response = NetworkClient.httpClient.post("$BASE_URL/login") {
                 contentType(ContentType.Application.Json)
                 setBody(loginRequest)
             }
 
             if (response.status == HttpStatusCode.OK) {
-                // Wyciągamy token z JSON-a (np. {"token": "eyJ..."})
-                val tokenResponse = response.body<TokenResponse>()
-                val token = tokenResponse.token
-
-                // Zapisujemy token (tutaj potrzebujemy dostępu do SharedPreferences)
-                Result.success(token)
+                val body = response.bodyAsText()
+                Result.success(body)
             } else {
-                val errorBody = response.bodyAsText()
-                println("DEBUG_API: Status: ${response.status}, Body: $errorBody")
-                Result.failure(Exception("Błąd: ${response.status}"))
-
+                Result.failure(Exception("Błędny e-mail lub hasło"))
             }
         } catch (e: Exception) {
             Result.failure(e)
