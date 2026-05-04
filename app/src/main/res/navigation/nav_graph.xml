@@ -25,7 +25,11 @@
     <fragment
         android:id="@+id/appointmentsFragment"
         android:name="com.dominox.clinicapp.ui.screens.appointments.AppointmentsFragment"
-        android:label="@string/appointments_title" />
+        android:label="@string/appointments_title" >
+        <action
+            android:id="@+id/action_appointmentsFragment_to_bookAppointment"
+            app:destination="@id/bookAppointment" />
+    </fragment>
 
     <fragment
         android:id="@+id/medicalHistoryFragment"

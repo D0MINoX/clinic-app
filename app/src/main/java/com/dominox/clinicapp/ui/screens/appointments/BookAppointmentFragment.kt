@@ -26,8 +26,8 @@ import java.time.LocalTime
 @SuppressLint("NewApi")
 class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
 
-    private lateinit var dateField: EditText
-    private lateinit var timeField: EditText
+    private lateinit var dateTimeField: EditText
+    //private lateinit var timeField: EditText
     private lateinit var doctorSpinner: Spinner
 
     private var selectedDate: String = ""
@@ -58,11 +58,8 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
             doctorList
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        dateField = view.findViewById(R.id.dateField)
-        timeField = view.findViewById(R.id.timeField)
-
-        dateField.setOnClickListener { openSlotPickerDialog() }
-        timeField.setOnClickListener { openSlotPickerDialog() }
+        dateTimeField = view.findViewById(R.id.dateTimeField)
+        dateTimeField.setOnClickListener { openSlotPickerDialog() }
 
         view.findViewById<MaterialButton>(R.id.bookCancelButton).setOnClickListener {
             findNavController().navigateUp()
@@ -188,8 +185,7 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
             }
             selectedDate = currentDate.toString()
             selectedTime = pickedSlot!!
-            dateField.setText(selectedDate)
-            timeField.setText(selectedTime)
+            dateTimeField.setText(selectedDate + " | " + selectedTime)
             dialog.dismiss()
         }
 
