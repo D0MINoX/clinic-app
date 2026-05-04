@@ -17,3 +17,22 @@ data class Appointment(
     val reason: String,
     val status: String
 )
+@Serializable
+data class AppointmentRequest(
+    val patientId: Int,
+    val doctorId: Int,
+    val appointmentDate: String,
+    val appointmentTime: String,
+    val reason: String
+)
+
+@Serializable
+data class AppointmentResponse(
+    val id: Int,
+    val patientId: Int,
+    val doctorId: Int,
+    val appointmentDate: String,
+    val appointmentTime: String,
+    val reason: String,
+    val status: String
+)

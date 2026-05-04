@@ -1,9 +1,13 @@
 package com.dominox.clinicapp.data.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Doctor(
-    val id: Long,
+    val id: Int,
     val firstName: String,
     val lastName: String,
-    val specialization: String,
-    val isActive: Boolean
+    val specialization: String? = null,
+    val isActive: Boolean? = true
 )
+

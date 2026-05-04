@@ -11,39 +11,40 @@ import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
+import com.dominox.clinicapp.api.AppointmentService
+import com.dominox.clinicapp.api.DoctorService
+import com.dominox.clinicapp.api.TokenManager
+import com.dominox.clinicapp.data.models.AppointmentRequest
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import javax.inject.Inject
 
 // SuppressLint zastępuje @RequiresApi — czystsze niż adnotacja na każdej metodzie
 @SuppressLint("NewApi")
+@AndroidEntryPoint
 class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
-
+    @Inject
+    lateinit var doctorService : DoctorService
+    @Inject lateinit var appointmentService: AppointmentService
+    @Inject lateinit var tokenManager: TokenManager
     private lateinit var dateTimeField: EditText
-    //private lateinit var timeField: EditText
+    private lateinit var reasonField: EditText
     private lateinit var doctorSpinner: Spinner
-
+    private var fullDoctorList = listOf<com.dominox.clinicapp.data.models.Doctor>()
     private var selectedDate: String = ""
     private var selectedTime: String = ""
-
-    private val doctorList = listOf(
-        "— wybierz lekarza —",
-        "Jan Kowalski · Neurolog",
-        "Anna Nowak · Kardiolog",
-        "Piotr Wiśniewski · Ortopeda",
-        "Katarzyna Kowalczyk · Dermatolog",
-        "Marek Zieliński · Internista",
-        "Monika Wójcik · Pediatra",
-        "Tomasz Kamiński · Chirurg",
-        "Ewa Lewandowska · Okulista"
-    )
+    private val doctorList = mutableListOf<String>("Wybierz lekarza")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,7 +58,7 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
             android.R.layout.simple_spinner_item,
             doctorList
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
+        reasonField = view.findViewById(R.id.reasonEditText)
         dateTimeField = view.findViewById(R.id.dateTimeField)
         dateTimeField.setOnClickListener { openSlotPickerDialog() }
 
@@ -69,6 +70,7 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
         view.findViewById<MaterialButton>(R.id.bookReserveButton).setOnClickListener {
             onReserveClicked(view)
         }
+        fetchDoctors()
     }
 
     private fun openSlotPickerDialog() {
@@ -118,36 +120,48 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
 
         fun refreshSlots(date: LocalDate) {
             tvDate.text = formatDate(date)
-
             btnPrev.isEnabled = date.isAfter(today)
-            btnPrev.alpha     = if (date.isAfter(today)) 1f else 0.3f
+            btnPrev.alpha = if (date.isAfter(today)) 1f else 0.3f
 
             chipGroup.removeAllViews()
             pickedSlot = null
 
             if (date.dayOfWeek == DayOfWeek.SUNDAY) {
-                tvNoSlots.text       = "Niedziela — gabinet nieczynny"
+                tvNoSlots.text = "Niedziela — gabinet nieczynny"
                 tvNoSlots.visibility = View.VISIBLE
                 chipGroup.visibility = View.GONE
                 return
             }
 
-            // Docelowo: GET /api/doctors/{id}/availability?date={date}
-            val slots = generateAvailableSlots(date, occupiedSlots = emptyList())
+            // Pobieramy ID wybranego lekarza (pozycja - 1, bo na 0 jest "Wybierz lekarza")
+            val selectedDoctor = fullDoctorList.getOrNull(doctorSpinner.selectedItemPosition - 1)
+            if (selectedDoctor == null) return
 
-            if (slots.isEmpty()) {
-                tvNoSlots.text = "Brak wolnych terminów w tym dniu"
+            // WYWOŁANIE API
+            viewLifecycleOwner.lifecycleScope.launch {
+                tvNoSlots.text = "Pobieranie wolnych terminów..."
                 tvNoSlots.visibility = View.VISIBLE
                 chipGroup.visibility = View.GONE
-            } else {
-                tvNoSlots.visibility = View.GONE
-                chipGroup.visibility = View.VISIBLE
-                slots.forEach { slot ->
-                    val chip = Chip(requireContext()).apply {
-                        text = slot
-                        isCheckable = true
+
+                val result = appointmentService.getOccupiedSlots(selectedDoctor.id.toInt(), date.toString())
+
+                val occupied = result.getOrDefault(emptyList())
+                val slots = generateAvailableSlots(date, occupiedSlots = occupied)
+
+                if (slots.isEmpty()) {
+                    tvNoSlots.text = "Brak wolnych terminów w tym dniu"
+                    tvNoSlots.visibility = View.VISIBLE
+                    chipGroup.visibility = View.GONE
+                } else {
+                    tvNoSlots.visibility = View.GONE
+                    chipGroup.visibility = View.VISIBLE
+                    slots.forEach { slot ->
+                        val chip = Chip(requireContext()).apply {
+                            text = slot
+                            isCheckable = true
+                        }
+                        chipGroup.addView(chip)
                     }
-                    chipGroup.addView(chip)
                 }
             }
         }
@@ -193,17 +207,48 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
     }
 
     private fun onReserveClicked(view: View) {
-        if (doctorSpinner.selectedItemPosition == 0) {
+        // 1. Walidacja wyboru lekarza
+        val selectedDoctor = fullDoctorList.getOrNull(doctorSpinner.selectedItemPosition - 1)
+        if (selectedDoctor == null) {
             Snackbar.make(view, "Wybierz lekarza", Snackbar.LENGTH_SHORT).show()
             return
         }
+
+        // 2. Walidacja daty i czasu
         if (selectedDate.isEmpty() || selectedTime.isEmpty()) {
             Snackbar.make(view, "Wybierz datę i godzinę wizyty", Snackbar.LENGTH_SHORT).show()
             return
         }
 
-        // TODO: POST /api/appointments
-        Snackbar.make(view, "Zarezerwowano: $selectedDate o $selectedTime", Snackbar.LENGTH_LONG).show()
+        val patientId = tokenManager.getUserIdFromToken()
+
+        if (patientId == null) {
+            Snackbar.make(view, "Błąd: Nie znaleziono ID użytkownika. Zaloguj się ponownie.", Snackbar.LENGTH_LONG).show()
+            return
+        }
+        val userReason = reasonField.text.toString().trim()
+        val finalReason = if (userReason.isEmpty()) "Wizyta kontrolna" else userReason
+        val request = AppointmentRequest(
+            patientId = patientId,
+            doctorId = selectedDoctor.id.toInt(),
+            appointmentDate = selectedDate,
+            appointmentTime = selectedTime,
+            reason = finalReason
+        )
+
+        // 4. Wywołanie API w Coroutine
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = appointmentService.bookAppointment(request)
+
+            if (result.isSuccess) {
+                val booked = result.getOrNull()
+                Snackbar.make(view, "Sukces! Umówiono wizytę nr ${booked?.id}", Snackbar.LENGTH_LONG).show()
+                view.postDelayed({ findNavController().navigateUp() }, 2000)
+            } else {
+                val error = result.exceptionOrNull()
+                Snackbar.make(view, "Błąd rezerwacji: ${error?.message}", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun generateAvailableSlots(date: LocalDate, occupiedSlots: List<String>): List<String> {
@@ -221,5 +266,25 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
             current = current.plusMinutes(30)
         }
         return slots
+    }
+    private fun fetchDoctors() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = doctorService.getDoctors()
+
+            if (result.isSuccess) {
+                val doctors = result.getOrNull() ?: emptyList()
+                fullDoctorList = result.getOrNull() ?: emptyList()
+                doctorList.clear()
+                doctorList.add("Wybierz lekarza")
+                doctorList.addAll(doctors.map { "${it.firstName} ${it.lastName} - ${it.specialization}" })
+
+                // Powiadamiamy adapter o zmianie danych
+                (doctorSpinner.adapter as? ArrayAdapter<*>)?.notifyDataSetChanged()
+            } else {
+                val error = result.exceptionOrNull()
+                Snackbar.make(requireView(), "Błąd pobierania lekarzy: ${error?.message}", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 }

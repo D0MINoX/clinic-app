@@ -105,8 +105,9 @@
             android:layout_marginLeft="20dp"
             android:text="Powód wizyty"
             android:textSize="18sp" />
-        
+
         <EditText
+            android:id="@+id/reasonEditText"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_marginLeft="20dp"
