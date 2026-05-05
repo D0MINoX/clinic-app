@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
@@ -59,6 +60,9 @@
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_adminDashboardFragment"
+            app:destination="@id/adminDashboardFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -72,5 +76,10 @@
         android:id="@+id/bookAppointment"
         android:name="com.dominox.clinicapp.ui.screens.appointments.BookAppointmentFragment"
         android:label="BookAppointment" />
+    <fragment
+        android:id="@+id/adminDashboardFragment"
+        android:name="com.dominox.clinicapp.ui.screens.adminDashboard.AdminDashboardFragment"
+        android:label="fragment_admin_dashboard"
+        tools:layout="@layout/fragment_admin_dashboard" />
 
 </navigation>
