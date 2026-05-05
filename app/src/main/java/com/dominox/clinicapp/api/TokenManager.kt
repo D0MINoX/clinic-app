@@ -43,6 +43,22 @@ private val context: Context
             null
         }
     }
+
+    fun getRoleFromToken(): String?{
+        val token = getToken() ?: return null
+        return try {
+            val tokenToDecode = if (token.startsWith("{\"token\":\"")) {
+                token.substringAfter("{\"token\":\"").substringBefore("\"}")
+            } else {
+                token
+            }
+            val jwt = JWT(tokenToDecode)
+            jwt.getClaim("role").asString()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun getUserNameFromToken(): String? {
         val token = getToken() ?: return null
         return try {
