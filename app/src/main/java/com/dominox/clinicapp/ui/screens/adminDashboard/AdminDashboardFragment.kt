@@ -25,7 +25,7 @@ class AdminDashboardFragment : Fragment(R.layout.fragment_admin_dashboard) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<TextView>(R.id.adminWelcomeText).text = "Dzień dobry, ${tokenManager.getUserNameFromToken()}!"
+        view.findViewById<TextView>(R.id.adminWelcomeText).text = "Dzień dobry, ${tokenManager.getUserNameFromToken()?.substringBefore(" ")}!"
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.dashboardRecyclerView)
         val recyclerItems = listOf(
