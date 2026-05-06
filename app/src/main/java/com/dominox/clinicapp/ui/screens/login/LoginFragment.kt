@@ -12,6 +12,7 @@ import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.AuthService
 import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.data.models.LoginRequest
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,7 +67,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     withContext(Dispatchers.Main) {
                         result.onSuccess {token ->
                             tokenManager.saveToken(token)
-                            findNavController().navigate(R.id.homeFragment)
+                            when(tokenManager.getRoleFromToken()){
+                                "admin" -> {findNavController().navigate(R.id.adminDashboardFragment)
+                                    Snackbar.make(view,"DZIALA", Snackbar.LENGTH_SHORT).show()
+                                }
+                                else -> findNavController().navigate(R.id.homeFragment)
+                            }
                         }.onFailure {
                             showSimpleAlert("Logowanie nieudane", it.message ?: "Spróbuj ponownie")
                         }
