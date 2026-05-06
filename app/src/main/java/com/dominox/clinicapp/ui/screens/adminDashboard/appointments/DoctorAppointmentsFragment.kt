@@ -57,7 +57,7 @@ class DoctorAppointmentsFragment : Fragment(R.layout.fragment_doctor_appointment
                 mainRecyclerView.adapter = DoctorDayGroupAdapter(grouped)
 
             }.onFailure {
-                Snackbar.make(requireView(), "Błąd pobierania wizyt", Snackbar.LENGTH_SHORT)
+                Snackbar.make(requireView(), "Błąd pobierania wizyt", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
