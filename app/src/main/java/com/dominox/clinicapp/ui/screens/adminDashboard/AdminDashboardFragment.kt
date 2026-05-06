@@ -13,6 +13,7 @@ import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.ui.screens.home.HomeMenuAdapter
 import com.dominox.clinicapp.ui.screens.home.HomeMenuItem
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import org.w3c.dom.Text
@@ -42,5 +43,15 @@ class AdminDashboardFragment : Fragment(R.layout.fragment_admin_dashboard) {
                 findNavController().navigate(item.destinationId)
             }
         }
+
+        //wylogowanie
+        view.findViewById<MaterialButton>(R.id.dashboardLogoutButton).setOnClickListener {
+            logout()
+        }
+    }
+
+    private fun logout(){
+        tokenManager.clearToken()
+        findNavController().navigate(R.id.loginFragment)
     }
 }
