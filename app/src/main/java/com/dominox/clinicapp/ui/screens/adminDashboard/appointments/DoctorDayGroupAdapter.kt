@@ -39,7 +39,7 @@ class DoctorDayGroupAdapter(
 
         //wewnetrzna lista
         p0.recyclerView.layoutManager = LinearLayoutManager(p0.itemView.context)
-        p0.recyclerView.adapter = AppointmentsAdapter(group.appointments)
+        p0.recyclerView.adapter = DoctorAppointmentAdapter(group.appointments)
 
         //rozwijanie
         p0.recyclerView.visibility = if(group.isExpanded) View.VISIBLE else View.GONE
