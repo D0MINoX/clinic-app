@@ -6,13 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
-import com.dominox.clinicapp.api.AppointmentService
-import com.dominox.clinicapp.ui.screens.appointments.AppointmentsAdapter
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import java.time.DayOfWeek
 import java.time.LocalDate
-import kotlin.coroutines.coroutineContext
 
 class DoctorDayGroupAdapter(
     private val groups: List<DoctorAppointmentsFragment.DayGroup>

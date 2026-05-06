@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -12,7 +11,6 @@ import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.AuthService
 import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.data.models.LoginRequest
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint

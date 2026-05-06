@@ -1,9 +1,7 @@
 package com.dominox.clinicapp.ui.screens.adminDashboard
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -14,9 +12,7 @@ import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.ui.screens.home.HomeMenuAdapter
 import com.dominox.clinicapp.ui.screens.home.HomeMenuItem
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import org.w3c.dom.Text
 import javax.inject.Inject
 
 @AndroidEntryPoint
