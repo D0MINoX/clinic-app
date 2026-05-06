@@ -69,7 +69,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             tokenManager.saveToken(token)
                             when(tokenManager.getRoleFromToken()){
                                 "admin" -> {findNavController().navigate(R.id.adminDashboardFragment)
-                                    Snackbar.make(view,"DZIALA", Snackbar.LENGTH_SHORT).show()
                                 }
                                 else -> findNavController().navigate(R.id.homeFragment)
                             }
