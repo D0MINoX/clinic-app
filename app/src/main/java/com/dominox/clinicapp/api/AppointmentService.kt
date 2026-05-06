@@ -12,7 +12,6 @@ import javax.inject.Inject
 class AppointmentService @Inject constructor() {
     // Adres Twojego API
     private val BASE_URL = "https://api-kotlin.rosaryapi.pl/api/appointments"
-
     suspend fun getPatientAppointments(patientId: Int): Result<List<Appointment>> {
         return try {
             val response = NetworkClient.httpClient.get("$BASE_URL/patient/$patientId") {
@@ -29,6 +28,24 @@ class AppointmentService @Inject constructor() {
             Result.failure(e)
         }
     }
+
+    suspend fun getDoctorAppointments(doctorId: Int): Result<List<Appointment>>{
+        return try{
+            val response = NetworkClient.httpClient.get ("$BASE_URL/doctor/$doctorId"){
+                contentType(ContentType.Application.Json)
+            }
+
+            if(response.status == HttpStatusCode.OK){
+                val appointments = response.body<List<Appointment>>()
+                Result.success(appointments)
+            }else{
+                Result.failure(Exception("Błąd serwera: ${response.status}"))
+            }
+        }catch (e: Exception){
+            Result.failure(e)
+        }
+    }
+
     suspend fun getOccupiedSlots(doctorId: Int, date: String): Result<List<String>> {
         return try {
             val response = NetworkClient.httpClient.get("$BASE_URL/getOccupiedSlots") {
@@ -47,7 +64,7 @@ class AppointmentService @Inject constructor() {
     }
     suspend fun bookAppointment(request: AppointmentRequest): Result<AppointmentResponse> {
         return try {
-            val response = NetworkClient.httpClient.post("https://api-kotlin.rosaryapi.pl/api/appointments/book") {
+            val response = NetworkClient.httpClient.post("http://192.168.1.52:8081/api/appointments/book") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
