@@ -20,9 +20,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         if (token != null) {
-
-
-            navController.navigate(R.id.homeFragment)
+            if(tokenManager.getRoleFromToken() == "admin"){
+                navController.navigate(R.id.adminDashboardFragment)
+            }else{
+                navController.navigate(R.id.homeFragment)
+            }
         } else {
             navController.navigate(R.id.loginFragment)
         }
