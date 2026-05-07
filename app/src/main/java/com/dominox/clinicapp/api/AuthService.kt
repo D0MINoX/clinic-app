@@ -2,17 +2,17 @@ package com.dominox.clinicapp.api
 import com.dominox.clinicapp.data.models.LoginRequest
 import com.dominox.clinicapp.data.models.Patient
 import com.dominox.clinicapp.network.NetworkClient
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.client.call.*
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import javax.inject.Inject
 
 class AuthService @Inject constructor() {
     // 10.0.2.2 to specjalny adres IP emulatora wskazujący na localhost Twojego komputera
     private val BASE_URL = "https://api-kotlin.rosaryapi.pl/api/"
-
     suspend fun register(patient: Patient): Result<String> {
         return try {
             val response = NetworkClient.httpClient.post("$BASE_URL/register") {

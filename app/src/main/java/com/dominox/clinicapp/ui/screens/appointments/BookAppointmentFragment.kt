@@ -260,7 +260,10 @@ class BookAppointmentFragment : Fragment(R.layout.fragment_book_appointment) {
         var current = start
         while (current.isBefore(end)) {
             val slotKey = "${date}T${current}"
-            if (!occupiedSlots.contains(slotKey)) {
+            // nie powinno dać się umówić wizyty o godzinie która już była, tj.
+            // jesli aktualnie jest 11:00 i chcemy umówić wizytę na
+            // na ten sam dzień, to nie powinniśmy móc umówić wizyty na 8:30 np.
+            if (!occupiedSlots.contains(slotKey) && current > LocalTime.now()) {
                 slots.add(current.toString())
             }
             current = current.plusMinutes(30)

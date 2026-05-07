@@ -2,7 +2,6 @@ package com.dominox.clinicapp.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.ktor.websocket.CloseReason
 import kotlinx.serialization.Serializable
 
 @Entity(tableName = "appointments")

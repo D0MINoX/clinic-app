@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -66,7 +65,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     withContext(Dispatchers.Main) {
                         result.onSuccess {token ->
                             tokenManager.saveToken(token)
-                            findNavController().navigate(R.id.homeFragment)
+                            when(tokenManager.getRoleFromToken()){
+                                "admin" -> {findNavController().navigate(R.id.adminDashboardFragment)
+                                }
+                                else -> findNavController().navigate(R.id.homeFragment)
+                            }
                         }.onFailure {
                             showSimpleAlert("Logowanie nieudane", it.message ?: "Spróbuj ponownie")
                         }

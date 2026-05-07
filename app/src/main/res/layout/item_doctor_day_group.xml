@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dayHeaderButton"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DZIEŃ, PREFIX MIESIAC ROK"
+        android:gravity="start|center_vertical"
+        android:textAlignment="viewStart"
+        app:icon="@drawable/ic_add_24"
+        app:iconGravity="end" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dayAppointmentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</LinearLayout>
