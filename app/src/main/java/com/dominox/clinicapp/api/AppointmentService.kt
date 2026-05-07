@@ -69,7 +69,7 @@ class AppointmentService @Inject constructor() {
     }
     suspend fun bookAppointment(request: AppointmentRequest): Result<AppointmentResponse> {
         return try {
-            val response = NetworkClient.httpClient.post("http://192.168.1.52:8081/api/appointments/book") {
+            val response = NetworkClient.httpClient.post("${BASE_URL}/book") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
