@@ -10,9 +10,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
+import com.dominox.clinicapp.api.TokenManager
+import com.dominox.clinicapp.ui.screens.adminDashboard.appointments.DoctorAppointmentAdapter
+import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
+    @Inject lateinit var tokenManager: TokenManager
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,6 +67,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 item.destinationId != null -> findNavController().navigate(item.destinationId)
             }
         }
+
+        //wylogowanie
+        view.findViewById<MaterialButton>(R.id.homeLogoutButton).setOnClickListener {
+            logout()
+        }
     }
 
     private fun openDialer() {
@@ -67,5 +79,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
+    }
+
+    private fun logout(){
+        tokenManager.clearToken()
+        findNavController().navigate(R.id.loginFragment)
     }
 }
