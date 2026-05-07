@@ -15,6 +15,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,7 +49,23 @@ class DoctorAppointmentsFragment : Fragment(R.layout.fragment_doctor_appointment
         viewLifecycleOwner.lifecycleScope.launch {
             val result = appointmentService.getDoctorAppointments(id)
             result.onSuccess { list ->
-                val grouped = list.groupBy { it.appointmentDate }
+                // filtrowanie, aby uzyskac wyniki tylko po dzisiejszej dacie
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                val now = LocalDateTime.now()
+
+                val filteredList = list.filter { appointment ->
+                    try {
+                        val appointmentDateTime = LocalDateTime.parse(
+                            "${appointment.appointmentDate} ${appointment.appointmentTime}",
+                            formatter
+                        )
+                        !appointmentDateTime.isBefore(now)
+                    }catch (e: Exception){
+                        true
+                    }
+                }
+
+                val grouped = filteredList.groupBy { it.appointmentDate }
                     .map { DayGroup(it.key, it.value.sortedBy { a -> a.appointmentTime }) }
                     .sortedBy { it.date }
 
