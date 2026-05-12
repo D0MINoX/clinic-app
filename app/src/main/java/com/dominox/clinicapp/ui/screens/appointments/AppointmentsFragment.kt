@@ -63,7 +63,7 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
             Snackbar.make(view, "Błąd autoryzacji. Zaloguj się ponownie.", Snackbar.LENGTH_LONG).show()
         }
         view.findViewById<Button>(R.id.bookAppointmentButton).setOnClickListener {
-            findNavController().navigate(R.id.bookAppointment)
+            findNavController().navigate(R.id.doctorsListFragment)
         }
     }
     private fun loadAppointments(id: Int) {

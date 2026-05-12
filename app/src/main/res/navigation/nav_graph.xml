@@ -19,8 +19,8 @@
             android:id="@+id/action_homeFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_bookAppointment"
-            app:destination="@id/bookAppointment" />
+            android:id="@+id/action_homeFragment_to_doctorsListFragment"
+            app:destination="@id/doctorsListFragment" />
     </fragment>
 
     <fragment
@@ -28,8 +28,8 @@
         android:name="com.dominox.clinicapp.ui.screens.appointments.AppointmentsFragment"
         android:label="@string/appointments_title" >
         <action
-            android:id="@+id/action_appointmentsFragment_to_bookAppointment"
-            app:destination="@id/bookAppointment" />
+            android:id="@+id/action_appointmentsFragment_to_doctorsListFragment"
+            app:destination="@id/doctorsListFragment" />
     </fragment>
 
     <fragment
@@ -73,10 +73,6 @@
             app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/bookAppointment"
-        android:name="com.dominox.clinicapp.ui.screens.appointments.BookAppointmentFragment"
-        android:label="BookAppointment" />
-    <fragment
         android:id="@+id/adminDashboardFragment"
         android:name="com.dominox.clinicapp.ui.screens.adminDashboard.AdminDashboardFragment"
         android:label="fragment_admin_dashboard"
@@ -90,5 +86,29 @@
         android:name="com.dominox.clinicapp.ui.screens.adminDashboard.appointments.DoctorAppointmentsFragment"
         android:label="fragment_doctor_appointments"
         tools:layout="@layout/fragment_doctor_appointments" />
+    <fragment
+        android:id="@+id/doctorsListFragment"
+        android:name="com.dominox.clinicapp.ui.screens.appointments.DoctorsListFragment"
+        android:label="DoctorsListFragment" >
+        <action
+            android:id="@+id/action_doctorsListFragment_to_doctorDetailsFragment"
+            app:destination="@id/doctorDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/doctorDetailsFragment"
+        android:name="com.dominox.clinicapp.ui.screens.appointments.DoctorDetailsFragment"
+        android:label="DoctorDetailsFragment">
+        <argument
+            android:name="doctorId"
+            app:argType="integer" />
+        <argument
+            android:name="doctorName"
+            app:argType="string" />
+        <argument
+            android:name="doctorSpecialization"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>
