@@ -32,7 +32,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 iconResId = android.R.drawable.ic_menu_my_calendar,
                 title = getString(R.string.home_menu_book_appointment),
                 description = getString(R.string.home_menu_book_appointment_desc),
-                destinationId = R.id.bookAppointment
+                destinationId = R.id.doctorsListFragment
             ),
             HomeMenuItem(
                 iconResId = android.R.drawable.ic_menu_agenda,
