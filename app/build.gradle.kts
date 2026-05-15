@@ -66,7 +66,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.8.5")
     implementation("com.google.android.material:material:1.13.0")
     implementation("com.auth0.android:jwtdecode:2.0.2")
-
+    implementation("io.ktor:ktor-client-websockets:2.3.12")
+    implementation("io.ktor:ktor-client-okhttp:2.3.12")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))
     implementation("com.google.android.libraries.places:places:3.5.0")
 

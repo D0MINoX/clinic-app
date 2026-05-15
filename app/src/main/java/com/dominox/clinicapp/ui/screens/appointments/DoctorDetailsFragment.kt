@@ -2,14 +2,17 @@ package com.dominox.clinicapp.ui.screens.appointments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dominox.clinicapp.R
+import com.dominox.clinicapp.ViewModels.BookingViewModel
 import com.dominox.clinicapp.api.AppointmentService
 import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.data.models.AppointmentRequest
@@ -19,6 +22,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -32,20 +36,26 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
 
     @Inject lateinit var appointmentService: AppointmentService
     @Inject lateinit var tokenManager: TokenManager
-    
+
+    // TADY JEST NASZ VIEW MODEL!
+    private val viewModel: BookingViewModel by viewModels()
+
     private var doctorId: Int = -1
     private var doctorName: String = ""
     private var doctorSpecialization: String? = null
-    
+
     private lateinit var tvDate: TextView
     private lateinit var btnPrev: ImageButton
     private lateinit var btnNext: ImageButton
     private lateinit var chipGroup: ChipGroup
     private lateinit var tvNoSlots: TextView
     private lateinit var reasonField: EditText
-    
+
     private var selectedDate: LocalDate = LocalDate.now()
     private var pickedSlot: String? = null
+
+    // Zmienna do trzymania nasłuchu WebSocket
+    private var collectorJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +69,13 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Rozpoczynamy cykl życia ViewModelu (żeby WebSocket zaczął nasłuchiwać od razu)
+        viewModel.hashCode()
+
         setupUI(view)
+        setupObservers() // Uruchamiamy nasłuchiwanie na zmiany z ViewModelu
+
+        // Pierwsze załadowanie daty
         refreshSlots(selectedDate)
     }
 
@@ -105,6 +121,32 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
         }
     }
 
+    // Nowa funkcja - nasłuchuje strumienia "occupiedSlots" NA ŻYWO
+    private fun setupObservers() {
+        collectorJob = viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.occupiedSlots.collect { occupied ->
+                chipGroup.removeAllViews()
+                val slots = generateAvailableSlots(selectedDate, occupiedSlots = occupied)
+
+                if (slots.isEmpty()) {
+                    tvNoSlots.text = "Brak wolnych terminów w tym dniu"
+                    tvNoSlots.visibility = View.VISIBLE
+                    chipGroup.visibility = View.GONE
+                } else {
+                    tvNoSlots.visibility = View.GONE
+                    chipGroup.visibility = View.VISIBLE
+                    slots.forEach { slot ->
+                        val chip = Chip(requireContext()).apply {
+                            text = slot
+                            isCheckable = true
+                        }
+                        chipGroup.addView(chip)
+                    }
+                }
+            }
+        }
+    }
+
     private fun formatDate(date: LocalDate): String {
         val today = LocalDate.now()
         val months = arrayOf(
@@ -141,32 +183,12 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
             return
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            tvNoSlots.text = "Pobieranie wolnych terminów..."
-            tvNoSlots.visibility = View.VISIBLE
-            chipGroup.visibility = View.GONE
+        // Zamiast uderzać do API bezpośrednio, przekazujemy pałeczkę do ViewModelu
+        tvNoSlots.text = "Pobieranie wolnych terminów..."
+        tvNoSlots.visibility = View.VISIBLE
+        chipGroup.visibility = View.GONE
 
-            val result = appointmentService.getOccupiedSlots(doctorId, date.toString())
-
-            val occupied = result.getOrDefault(emptyList())
-            val slots = generateAvailableSlots(date, occupiedSlots = occupied)
-
-            if (slots.isEmpty()) {
-                tvNoSlots.text = "Brak wolnych terminów w tym dniu"
-                tvNoSlots.visibility = View.VISIBLE
-                chipGroup.visibility = View.GONE
-            } else {
-                tvNoSlots.visibility = View.GONE
-                chipGroup.visibility = View.VISIBLE
-                slots.forEach { slot ->
-                    val chip = Chip(requireContext()).apply {
-                        text = slot
-                        isCheckable = true
-                    }
-                    chipGroup.addView(chip)
-                }
-            }
-        }
+        viewModel.loadSlots(doctorId, date.toString())
     }
 
     private fun onReserveClicked(view: View) {
@@ -183,7 +205,7 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
 
         val userReason = reasonField.text.toString().trim()
         val finalReason = if (userReason.isEmpty()) "Wizyta kontrolna" else userReason
-        
+
         val request = AppointmentRequest(
             patientId = patientId,
             doctorId = doctorId,
@@ -219,5 +241,10 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
             current = current.plusMinutes(30)
         }
         return slots
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        collectorJob?.cancel() // Zamykamy nasłuchiwanie jak wychodzimy z ekranu
     }
 }
