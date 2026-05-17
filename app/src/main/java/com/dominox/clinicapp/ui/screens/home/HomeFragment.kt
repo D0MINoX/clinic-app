@@ -53,8 +53,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 title = getString(R.string.home_menu_my_appointments),
                 description = getString(R.string.home_menu_my_appointments_desc),
                 destinationId = R.id.appointmentsFragment
-            ),
-            HomeMenuItem(
+            )
+           /*, HomeMenuItem(
                 iconResId = android.R.drawable.ic_menu_info_details,
                 title = getString(R.string.home_menu_history),
                 description = getString(R.string.home_menu_history_desc),
@@ -71,7 +71,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 title = getString(R.string.home_menu_settings),
                 description = getString(R.string.home_menu_settings_desc),
                 destinationId = R.id.settingsFragment
-            )
+            )*/
         )
 
         menuRecyclerView.layoutManager = LinearLayoutManager(requireContext())

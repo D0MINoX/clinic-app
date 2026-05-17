@@ -1,5 +1,6 @@
 package com.dominox.clinicapp.ViewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dominox.clinicapp.api.AppointmentService
@@ -27,25 +28,41 @@ class BookingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             liveUpdatesService.observeSlotTakenEvents().collect { (key, newTime) ->
+                // Bardzo ważne: sprawdzamy czy to event dla aktualnie wyświetlanego lekarza i daty
                 val expectedKey = "${currentDoctorId}_${currentDate}"
-
                 if (key == expectedKey) {
                     val dateFromKey = key.substringAfter("_")
                     val formattedSlot = "${dateFromKey}T${newTime}"
-                    _occupiedSlots.update { current -> current + formattedSlot }
+
+                    // Używamy zestawu (Set), aby uniknąć duplikatów
+                    _occupiedSlots.update { current ->
+                        (current + formattedSlot).distinct()
+                    }
                 }
             }
         }
     }
 
     fun loadSlots(doctorId: Int, date: String) {
+
+        _occupiedSlots.value = emptyList()
+
         currentDoctorId = doctorId
         currentDate = date
 
         viewModelScope.launch {
+            Log.d("DEBUG_SLOTS", "Rozpoczynam pobieranie dla lekarza $doctorId na dzień $date")
             val result = appointmentService.getOccupiedSlots(doctorId, date)
+
             result.onSuccess { slots ->
-                _occupiedSlots.value = slots
+                Log.d("DEBUG_SLOTS", "Pobrano z API: ${slots.size} zajętych slotów")
+                if (currentDate == date && currentDoctorId == doctorId) {
+                    _occupiedSlots.value = slots
+                }
+            }.onFailure { error ->
+                Log.e("DEBUG_SLOTS", "Błąd API: ${error.message}")
+                // W razie błędu wysyłamy pustą listę, żeby Fragment przestał wyświetlać "Ładowanie..."
+                _occupiedSlots.value = emptyList()
             }
         }
     }

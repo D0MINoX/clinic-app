@@ -8,14 +8,16 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
-
+@Serializable
+data class RecommendationsRequest(val recommendations: String)
 class AppointmentService @Inject constructor() {
-    // Adres Twojego API
     private val BASE_URL = "https://api-kotlin.rosaryapi.pl/api/appointments"
     suspend fun getPatientAppointments(patientId: Int): Result<List<Appointment>> {
         return try {
@@ -33,15 +35,30 @@ class AppointmentService @Inject constructor() {
             Result.failure(e)
         }
     }
+    suspend fun completeAppointment(appointmentId: Int, recommendations: String): Result<Unit> {
+        return try {
+            val response = NetworkClient.httpClient.put("$BASE_URL/$appointmentId/complete") {
+                contentType(ContentType.Application.Json)
+                setBody(RecommendationsRequest(recommendations))
+            }
 
-    suspend fun getDoctorAppointments(doctorId: Int): Result<List<Appointment>>{
+            if (response.status == HttpStatusCode.OK) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Błąd serwera: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    suspend fun getDoctorAppointments(doctorId: Int): Result<List<AppointmentResponse>>{
         return try{
             val response = NetworkClient.httpClient.get ("$BASE_URL/doctor/$doctorId"){
                 contentType(ContentType.Application.Json)
             }
 
             if(response.status == HttpStatusCode.OK){
-                val appointments = response.body<List<Appointment>>()
+                val appointments = response.body<List<AppointmentResponse>>()
                 Result.success(appointments)
             }else{
                 Result.failure(Exception("Błąd serwera: ${response.status}"))

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/detailsToolbar"
+            style="@style/Widget.ClinicApp.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:title="Szczegóły wizyty"
+             />
+        <!-- Nagłówek z Imieniem i Nazwiskiem (na wzór obrazka) -->
+        <TextView
+            android:id="@+id/detailPatientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jan Kowalski"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detailAppointmentType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wizyta kontrolna"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:background="#EEEEEE" />
+
+        <!-- Sekcja Daty i Godziny -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Termin wizyty"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginBottom="12dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="#F3F0F5"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
+
+            <TextView
+                android:id="@+id/detailDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Poniedziałek, 18 maja 2026, 10:30"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Sekcja Zaleceń (Duże pole tekstowe) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zalecenia lekarza"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#F5F5F5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/prescriptionsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="top"
+                android:hint="Wpisz zalecenia, dawkowanie leków lub uwagi..."
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Przycisk Zapisz -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveAppointmentButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:text="Zapisz zmiany"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

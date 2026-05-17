@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
+import com.dominox.clinicapp.data.models.AppointmentResponse
 import com.google.android.material.button.MaterialButton
 import java.time.DayOfWeek
 import java.time.LocalDate
 
 class DoctorDayGroupAdapter(
-    private val groups: List<DoctorAppointmentsFragment.DayGroup>
+    private val groups: List<DoctorAppointmentsFragment.DayGroup>,
+    private val onAppointmentClick: (AppointmentResponse) -> Unit
 ): RecyclerView.Adapter<DoctorDayGroupAdapter.ViewHolder>(){
 
     private val today = LocalDate.now()
@@ -35,7 +37,9 @@ class DoctorDayGroupAdapter(
 
         //wewnetrzna lista
         p0.recyclerView.layoutManager = LinearLayoutManager(p0.itemView.context)
-        p0.recyclerView.adapter = DoctorAppointmentAdapter(group.appointments)
+        p0.recyclerView.adapter = DoctorAppointmentAdapter(group.appointments) { clickedApp ->
+            onAppointmentClick(clickedApp)
+        }
 
         //rozwijanie
         p0.recyclerView.visibility = if(group.isExpanded) View.VISIBLE else View.GONE

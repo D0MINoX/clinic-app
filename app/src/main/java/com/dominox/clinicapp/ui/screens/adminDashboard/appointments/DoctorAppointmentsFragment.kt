@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.AppointmentService
 import com.dominox.clinicapp.api.TokenManager
-import com.dominox.clinicapp.data.models.Appointment
+import com.dominox.clinicapp.data.models.AppointmentResponse
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -22,8 +23,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DoctorAppointmentsFragment : Fragment(R.layout.fragment_doctor_appointments) {
 
-    // klasa przechowująca dane dla grupy dnia
-    data class DayGroup(val date: String, val appointments: List<Appointment>, var isExpanded: Boolean = false)
+    // Klasa przechowująca dane dla grupy dnia
+    data class DayGroup(
+        val date: String,
+        val appointments: List<AppointmentResponse>,
+        var isExpanded: Boolean = false
+    )
 
     @Inject lateinit var appointmentService: AppointmentService
     @Inject lateinit var tokenManager: TokenManager
@@ -36,41 +41,53 @@ class DoctorAppointmentsFragment : Fragment(R.layout.fragment_doctor_appointment
         mainRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val doctorId = tokenManager.getUserIdFromToken()
-        if(doctorId != null){
+        if (doctorId != null) {
             loadAppointments(doctorId)
         }
 
         view.findViewById<MaterialToolbar>(R.id.doctorAppointmentsToolbar)
             .setNavigationOnClickListener { findNavController().navigateUp() }
-
     }
 
-    private fun loadAppointments(id: Int){
+    private fun loadAppointments(id: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val result = appointmentService.getDoctorAppointments(id)
             result.onSuccess { list ->
-                // filtrowanie, aby uzyskac wyniki tylko po dzisiejszej dacie
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-                val now = LocalDateTime.now()
+                // 1. POPRAWIONE FILTROWANIE (Widzisz wszystkie dzisiejsze wizyty + przyszłe)
+                val today = LocalDate.now()
 
                 val filteredList = list.filter { appointment ->
                     try {
-                        val appointmentDateTime = LocalDateTime.parse(
-                            "${appointment.appointmentDate} ${appointment.appointmentTime}",
-                            formatter
-                        )
-                        !appointmentDateTime.isBefore(now)
-                    }catch (e: Exception){
-                        true
+                        val appointmentDate = LocalDate.parse(appointment.appointmentDate)
+                        // Pokazuj jeśli data jest dzisiaj lub w przyszłości
+                        !appointmentDate.isBefore(today)
+                    } catch (e: Exception) {
+                        true // Jeśli błąd parsowania, zostaw na liście dla bezpieczeństwa
                     }
                 }
 
+                // 2. GRUPOWANIE I SORTOWANIE (Wg daty i godziny)
                 val grouped = filteredList.groupBy { it.appointmentDate }
-                    .map { DayGroup(it.key, it.value.sortedBy { a -> a.appointmentTime }) }
+                    .map { entry ->
+                        DayGroup(
+                            date = entry.key,
+                            appointments = entry.value.sortedBy { it.appointmentTime }
+                        )
+                    }
                     .sortedBy { it.date }
 
-                mainRecyclerView.adapter = DoctorDayGroupAdapter(grouped)
+                // 3. ADAPTER Z NAWIGACJĄ (Używamy Parcelable dla całego obiektu)
+                mainRecyclerView.adapter = DoctorDayGroupAdapter(grouped) { clickedAppointment ->
+                    val bundle = Bundle().apply {
+                        // Przesyłamy cały obiekt (wymaga @Parcelize w AppointmentResponse)
+                        putParcelable("appointment", clickedAppointment)
+                    }
 
+                    findNavController().navigate(
+                        R.id.action_doctorAppointmentsFragment_to_appointmentDetailsFragment,
+                        bundle
+                    )
+                }
             }.onFailure {
                 Snackbar.make(requireView(), "Błąd pobierania wizyt", Snackbar.LENGTH_SHORT).show()
             }

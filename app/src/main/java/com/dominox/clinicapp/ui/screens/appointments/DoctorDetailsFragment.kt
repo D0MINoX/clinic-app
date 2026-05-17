@@ -37,7 +37,6 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
     @Inject lateinit var appointmentService: AppointmentService
     @Inject lateinit var tokenManager: TokenManager
 
-    // TADY JEST NASZ VIEW MODEL!
     private val viewModel: BookingViewModel by viewModels()
 
     private var doctorId: Int = -1
@@ -53,8 +52,6 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
 
     private var selectedDate: LocalDate = LocalDate.now()
     private var pickedSlot: String? = null
-
-    // Zmienna do trzymania nasłuchu WebSocket
     private var collectorJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,14 +65,9 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Rozpoczynamy cykl życia ViewModelu (żeby WebSocket zaczął nasłuchiwać od razu)
         viewModel.hashCode()
-
         setupUI(view)
-        setupObservers() // Uruchamiamy nasłuchiwanie na zmiany z ViewModelu
-
-        // Pierwsze załadowanie daty
+        setupObservers()
         refreshSlots(selectedDate)
     }
 
@@ -120,29 +112,11 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
             onReserveClicked(view)
         }
     }
-
-    // Nowa funkcja - nasłuchuje strumienia "occupiedSlots" NA ŻYWO
     private fun setupObservers() {
         collectorJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.occupiedSlots.collect { occupied ->
-                chipGroup.removeAllViews()
                 val slots = generateAvailableSlots(selectedDate, occupiedSlots = occupied)
-
-                if (slots.isEmpty()) {
-                    tvNoSlots.text = "Brak wolnych terminów w tym dniu"
-                    tvNoSlots.visibility = View.VISIBLE
-                    chipGroup.visibility = View.GONE
-                } else {
-                    tvNoSlots.visibility = View.GONE
-                    chipGroup.visibility = View.VISIBLE
-                    slots.forEach { slot ->
-                        val chip = Chip(requireContext()).apply {
-                            text = slot
-                            isCheckable = true
-                        }
-                        chipGroup.addView(chip)
-                    }
-                }
+                updateSlotsUI(slots)
             }
         }
     }
@@ -173,24 +147,34 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
         btnPrev.isEnabled = date.isAfter(today)
         btnPrev.alpha = if (date.isAfter(today)) 1f else 0.3f
 
-        chipGroup.removeAllViews()
         pickedSlot = null
-
         if (date.dayOfWeek == DayOfWeek.SUNDAY) {
+            updateSlotsUI(emptyList())
             tvNoSlots.text = "Niedziela — gabinet nieczynny"
-            tvNoSlots.visibility = View.VISIBLE
-            chipGroup.visibility = View.GONE
             return
         }
-
-        // Zamiast uderzać do API bezpośrednio, przekazujemy pałeczkę do ViewModelu
-        tvNoSlots.text = "Pobieranie wolnych terminów..."
-        tvNoSlots.visibility = View.VISIBLE
-        chipGroup.visibility = View.GONE
-
+        val initialSlots = generateAvailableSlots(date, emptyList())
+        updateSlotsUI(initialSlots)
         viewModel.loadSlots(doctorId, date.toString())
     }
-
+    private fun updateSlotsUI(slots: List<String>) {
+        chipGroup.removeAllViews()
+        if (slots.isEmpty()) {
+            tvNoSlots.text = "Brak wolnych terminów w tym dniu"
+            tvNoSlots.visibility = View.VISIBLE
+            chipGroup.visibility = View.GONE
+        } else {
+            tvNoSlots.visibility = View.GONE
+            chipGroup.visibility = View.VISIBLE
+            slots.forEach { slot ->
+                val chip = Chip(requireContext()).apply {
+                    text = slot
+                    isCheckable = true
+                }
+                chipGroup.addView(chip)
+            }
+        }
+    }
     private fun onReserveClicked(view: View) {
         if (pickedSlot == null) {
             Snackbar.make(view, "Wybierz godzinę wizyty", Snackbar.LENGTH_SHORT).show()
@@ -233,10 +217,20 @@ class DoctorDetailsFragment : Fragment(R.layout.fragment_doctor_details) {
 
         val slots = mutableListOf<String>()
         var current = start
+        val now = LocalDateTime.now()
+
         while (current.isBefore(end)) {
-            val slotKey = "${date}T${current}"
-            if (!occupiedSlots.contains(slotKey) && date.atTime(current).isAfter(LocalDateTime.now())) {
-                slots.add(current.toString())
+            // Format HH:mm (np. 08:30)
+            val timeString = String.format("%02d:%02d", current.hour, current.minute)
+
+            // Klucz ISO używany przez Twoje API: "2024-05-20T08:30"
+            val slotKey = "${date}T$timeString"
+
+            val isOccupied = occupiedSlots.contains(slotKey)
+            val isFuture = date.atTime(current).isAfter(now)
+
+            if (!isOccupied && isFuture) {
+                slots.add(timeString)
             }
             current = current.plusMinutes(30)
         }

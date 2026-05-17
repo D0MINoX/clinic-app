@@ -86,6 +86,14 @@
         android:name="com.dominox.clinicapp.ui.screens.adminDashboard.appointments.DoctorAppointmentsFragment"
         android:label="fragment_doctor_appointments"
         tools:layout="@layout/fragment_doctor_appointments" />
+    <action
+        android:id="@+id/action_doctorAppointmentsFragment_to_appointmentDetailsFragment"
+        app:destination="@id/appointmentDetailsFragment" />
+    <fragment
+        android:id="@+id/appointmentDetailsFragment"
+        android:name="com.dominox.clinicapp.ui.screens.adminDashboard.appointments.AppointmentDetailsFragment"
+        android:label="Szczegóły wizyty"
+        tools:layout="@layout/fragment_appointment_details" />
     <fragment
         android:id="@+id/doctorsListFragment"
         android:name="com.dominox.clinicapp.ui.screens.appointments.DoctorsListFragment"
