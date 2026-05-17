@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
 import com.dominox.clinicapp.data.models.Appointment
 
-class AppointmentsAdapter(private var appointments: List<Appointment>) :
+class AppointmentsAdapter(private var appointments: List<Appointment>, private var doctorsMap: Map<Int, String>) :
     RecyclerView.Adapter<AppointmentsAdapter.AppointmentViewHolder>() {
 
     // Klasa trzymająca referencje do widoków w item_appointment.xml
@@ -26,10 +26,11 @@ class AppointmentsAdapter(private var appointments: List<Appointment>) :
 
     override fun onBindViewHolder(holder: AppointmentViewHolder, position: Int) {
         val appointment = appointments[position]
+        val doctorName = doctorsMap[appointment.doctorId] ?: "Nieznany";
 
         // Ponieważ w JSONie masz tylko doctorId, na razie wyświetlimy ID.
         // Docelowo serwer powinien przesyłać też imię lekarza.
-        holder.doctorText.text = "Lekarz ID: ${appointment.doctorId}"
+        holder.doctorText.text = "Lekarz: $doctorName" //"Lekarz ID: ${appointment.doctorId}"
 
         // Łączymy datę z godziną
         holder.dateText.text = "${appointment.appointmentDate} o ${appointment.appointmentTime}"
@@ -40,8 +41,9 @@ class AppointmentsAdapter(private var appointments: List<Appointment>) :
     override fun getItemCount() = appointments.size
 
     // Funkcja do odświeżania danych
-    fun updateData(newList: List<Appointment>) {
+    fun updateData(newList: List<Appointment>, newMap: Map<Int, String>) {
         appointments = newList
+        doctorsMap = newMap
         notifyDataSetChanged()
     }
 }

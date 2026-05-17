@@ -9,8 +9,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dominox.clinicapp.R
 import com.dominox.clinicapp.api.AppointmentService
+import com.dominox.clinicapp.api.DoctorService
 import com.dominox.clinicapp.api.TokenManager
 import com.dominox.clinicapp.data.models.Appointment
+import com.dominox.clinicapp.data.models.Patient
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -24,12 +26,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
 
-    @Inject
-    lateinit var appointmentService: AppointmentService
+    @Inject lateinit var appointmentService: AppointmentService
+    @Inject lateinit var doctorService : DoctorService
     @Inject lateinit var tokenManager: TokenManager
-    private val appointmentsAdapter = AppointmentsAdapter(emptyList())
-    private val completedAppointmentsAdapter = AppointmentsAdapter(emptyList())
+    private val appointmentsAdapter = AppointmentsAdapter(emptyList(), emptyMap())
+    private val completedAppointmentsAdapter = AppointmentsAdapter(emptyList(), emptyMap())
     private var currentAppointments : List<Appointment> = emptyList()
+    private var doctorsMap: Map<Int, String> = emptyMap()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,7 +64,7 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
         val patientId = tokenManager.getUserIdFromToken()
 
         if (patientId != null) {
-            loadAppointments(patientId)
+            loadDoctorsAndAppointments(patientId)
         } else {
             // Jeśli nie ma ID w tokenie, coś jest nie tak (np. token wygasł)
             Snackbar.make(view, "Błąd autoryzacji. Zaloguj się ponownie.", Snackbar.LENGTH_LONG).show()
@@ -88,14 +91,24 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
 
                 val (upcomingAppointments, completedAppointments) = splitAppointmentsByDate(list)
 
-                appointmentsAdapter.updateData(upcomingAppointments)
-                completedAppointmentsAdapter.updateData(completedAppointments)
+                appointmentsAdapter.updateData(upcomingAppointments, doctorsMap)
+                completedAppointmentsAdapter.updateData(completedAppointments, doctorsMap)
 
                 if (list.isEmpty()) {
                     Snackbar.make(requireView(), "Brak zaplanowanych wizyt", Snackbar.LENGTH_SHORT).show()
                 }
             }.onFailure {
                 Snackbar.make(requireView(), "Nie udało się pobrać wizyt", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadDoctorsAndAppointments(patientId: Int){
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = doctorService.getDoctors()
+            result.onSuccess { list ->
+                doctorsMap = list.associate { it.id to "${it.firstName} ${it.lastName}" }
+                loadAppointments(patientId)
             }
         }
     }
@@ -107,9 +120,10 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
         sb.append("------------------------------------------------------------------------\n\n")
 
         appointments.forEach { appointment ->
+            val doctorName = doctorsMap[appointment.doctorId] ?: "Nieznany"
             sb.append("Data: ${appointment.appointmentDate}\n")
             sb.append("Godzina: ${appointment.appointmentTime}\n")
-            sb.append("Lekarz: ${appointment.doctorId}\n")
+            sb.append("Lekarz: ${doctorName}\n")
             sb.append("Powod: ${appointment.reason}\n")
             sb.append("Status: ${appointment.status}\n\n")
             sb.append("------------------------------------------------------------------------\n\n")
