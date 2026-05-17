@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.ClinicApp.MenuCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,5 +33,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Status" />
+
+        <!-- SEKCJA ROZWIJANA -->
+        <LinearLayout
+            android:id="@+id/expandedSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="8dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zalecenia lekarza:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/recommendationsText"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Brak zaleceń dla tej wizyty." />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
