@@ -143,7 +143,7 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
                 .setAction("OK") {}
                 .show()
         }catch (e: Exception){
-            Snackbar.make(requireView(), "Wystąpił błąd podczas generowania raportu", Snackbar.LENGTH_LONG)
+            Snackbar.make(requireView(), "Wystąpił błąd podczas generowania raportu", Snackbar.LENGTH_LONG).show()
         }
 
 
