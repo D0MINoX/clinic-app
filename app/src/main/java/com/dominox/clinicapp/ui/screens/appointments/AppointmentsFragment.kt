@@ -125,7 +125,8 @@ class AppointmentsFragment : Fragment(R.layout.fragment_appointments) {
             sb.append("Godzina: ${appointment.appointmentTime}\n")
             sb.append("Lekarz: ${doctorName}\n")
             sb.append("Powod: ${appointment.reason}\n")
-            sb.append("Status: ${appointment.status}\n\n")
+            sb.append("Status: ${appointment.status}\n")
+            sb.append("Zalecenia: ${appointment.recommendations ?: "Brak"}\n\n")
             sb.append("------------------------------------------------------------------------\n\n")
         }
 
