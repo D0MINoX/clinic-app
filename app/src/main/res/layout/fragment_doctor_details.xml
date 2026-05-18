@@ -168,7 +168,10 @@
                         android:inputType="textMultiLine"
                         android:gravity="top|start"
                         android:padding="12dp"
-                        android:background="@drawable/edit_text_background"/>
+                        android:background="@drawable/edit_text_background"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textColorHint="?attr/colorOnSurfaceVariant"
+                        android:importantForAutofill="no" />
 
                 </LinearLayout>
             </LinearLayout>
